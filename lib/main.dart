@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         '/Landing': (context) => LandingScreen(),
         '/login': (context) => LoginPage(),
         '/homepage': (context) =>
-            hoempage(), // Define the route for your homepage
+            SellerHomeScreen(), // Define the route for your homepage
       },
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rentatouille/views/homepage.dart';
 
 import '../models/sell_props.dart';
 import '../services/auth_provider.dart';
@@ -43,6 +44,11 @@ class _SellerRegisterPageState extends State<SellerRegisterPage> {
       await firebaseService.sellProperty(
         propertyName: _propertyNameController.text,
         location: _locationController.text,
+      );
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+            builder: (context) =>
+                SellerHomeScreen()), // Replace HomeScreen with your actual home screen widget
       );
 
       // User is registered and logged in, navigate to a new screen.
