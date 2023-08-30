@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../models/sell_props.dart';
+import '../services/auth_provider.dart';
+
 class SellerRegisterPage extends StatefulWidget {
   @override
   _SellerRegisterPageState createState() => _SellerRegisterPageState();
@@ -25,17 +28,23 @@ class _SellerRegisterPageState extends State<SellerRegisterPage> {
   }
 
   void _register() async {
+    FirebaseService firebaseService = FirebaseService();
     try {
       if (_passwordController.text != _confirmPasswordController.text) {
         // Show an error message or Snackbar indicating password mismatch.
         return;
       }
 
-      UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
+      await AuthProvider.register(
+        context,
+        _passwordController.text,
+        _emailController.text,
       );
+      await firebaseService.sellProperty(
+        propertyName: _propertyNameController.text,
+        location: _locationController.text,
+      );
+
       // User is registered and logged in, navigate to a new screen.
     } catch (e) {
       print('Registration error: $e');

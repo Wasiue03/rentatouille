@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rentatouille/models/rent_props.dart';
 
 import '../services/auth_provider.dart';
-import '../services/register_user.dart';
 
 class RentRegisterPage extends StatefulWidget {
   const RentRegisterPage({super.key});
