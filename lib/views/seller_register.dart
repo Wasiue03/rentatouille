@@ -1,108 +1,195 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-import '../models/sell_props.dart';
+class SellerRegisterPage extends StatefulWidget {
+  @override
+  _SellerRegisterPageState createState() => _SellerRegisterPageState();
+}
 
-class SellScreen extends StatelessWidget {
-  final TextEditingController _propertyNameController = TextEditingController();
-  final TextEditingController _locationController = TextEditingController();
-  final TextEditingController _askingPriceController = TextEditingController();
-  final TextEditingController _propertyDescriptionController =
-      TextEditingController();
+class _SellerRegisterPageState extends State<SellerRegisterPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  late TextEditingController _emailController;
+  late TextEditingController _passwordController;
+  late TextEditingController _confirmPasswordController;
+  late TextEditingController _propertyNameController;
+  late TextEditingController _locationController;
 
   @override
+  void initState() {
+    super.initState();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
+    _propertyNameController = TextEditingController();
+    _locationController = TextEditingController();
+  }
+
+  void _register() async {
+    try {
+      if (_passwordController.text != _confirmPasswordController.text) {
+        // Show an error message or Snackbar indicating password mismatch.
+        return;
+      }
+
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+      // User is registered and logged in, navigate to a new screen.
+    } catch (e) {
+      print('Registration error: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    _propertyNameController.dispose();
+    _locationController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 40, 39, 39),
-        title: Center(child: Text('Sell a Property')),
+        title: Text('Seller Registration'),
       ),
       body: Container(
-        color: Colors.black, // Set the background color to black
+        color: Colors.black,
         child: Center(
           child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  'Tell us about the property you want to sell',
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white), // Set text color to white
+                SizedBox(height: 20),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    controller: _emailController,
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      labelStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(Icons.email, color: Colors.white),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    controller: _passwordController,
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      labelStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(Icons.lock, color: Colors.white),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    obscureText: true,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    controller: _confirmPasswordController,
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Confirm Password',
+                      labelStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(Icons.lock, color: Colors.white),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    obscureText: true,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    controller: _propertyNameController,
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Property Name',
+                      labelStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(Icons.home, color: Colors.white),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    controller: _locationController,
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Location',
+                      labelStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(Icons.location_on, color: Colors.white),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
                 ),
                 SizedBox(height: 20),
-                TextFormField(
-                  controller: _propertyNameController,
-                  style: TextStyle(color: Colors.white), // Set field text color
-                  decoration: InputDecoration(
-                    labelText: 'Property Name',
-                    hintText: 'Any name of property',
-                    labelStyle:
-                        TextStyle(color: Colors.white), // Set label text color
-                    hintStyle:
-                        TextStyle(color: Colors.white), // Set hint text color
-                  ),
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: _locationController,
-                  style: TextStyle(color: Colors.white), // Set field text color
-                  decoration: InputDecoration(
-                    labelText: 'Location',
-                    hintText: 'Where it is located',
-                    labelStyle:
-                        TextStyle(color: Colors.white), // Set label text color
-                    hintStyle:
-                        TextStyle(color: Colors.white), // Set hint text color
-                  ),
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: _askingPriceController,
-                  style: TextStyle(color: Colors.white), // Set field text color
-                  decoration: InputDecoration(
-                    labelText: 'Monthly Price',
-                    hintText: 'Enter Desired Price',
-                    labelStyle:
-                        TextStyle(color: Colors.white), // Set label text color
-                    hintStyle:
-                        TextStyle(color: Colors.white), // Set hint text color
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: _propertyDescriptionController,
-                  style: TextStyle(color: Colors.white), // Set field text color
-                  maxLines: 4,
-                  decoration: InputDecoration(
-                    labelText: 'Property Description',
-                    hintText: 'Tell us about the property and architecture',
-                    labelStyle:
-                        TextStyle(color: Colors.white), // Set label text color
-                    hintStyle:
-                        TextStyle(color: Colors.white), // Set hint text color
-                  ),
-                ),
-                SizedBox(height: 20),
-                Center(
+                SizedBox(
+                  width: 150,
                   child: ElevatedButton(
-                    onPressed: () {
-                      submitSellPropertyData(
-                        propertyName: _propertyNameController.text,
-                        location: _locationController.text,
-                        askingPrice: double.parse(_askingPriceController.text),
-                        propertyDescription:
-                            _propertyDescriptionController.text,
-                      );
-                    },
-                    child: Text('Submit'),
+                    onPressed: _register,
+                    child: Text('Register'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          Colors.red, // Set button background color
-                      foregroundColor: Colors.white, // Set button text color
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   ),
                 ),

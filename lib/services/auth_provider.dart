@@ -1,26 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../models/user_auth.dart';
 
 class AuthProvider {
   static final _auth = FirebaseAuth.instance;
-  static final firestore = FirebaseFirestore.instance;
 
   static Future<UserCredential> register(
-      BuildContext context, String password, String email, String name) async {
+      BuildContext context, String password, String email) async {
     try {
       final user = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       await user.user!.sendEmailVerification();
-
-      final data = UserAuth(
-        name: name,
-        email: email,
-        id: user.user!.uid,
-      );
-
-      await firestore.collection('users').doc(user.user!.uid).set(data.toMap());
 
       return user;
     } on FirebaseAuthException catch (e) {
@@ -47,12 +38,7 @@ class AuthProvider {
         password: password,
       );
 
-      final raw =
-          await firestore.collection('users').doc(creds.user!.uid).get();
-
-      final data = UserAuth.fromMap(raw.data()!);
-
-      return data;
+      return UserAuth(id: creds.user!.uid, email: creds.user!.email!);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         ScaffoldMessenger.of(context)
@@ -72,22 +58,4 @@ class AuthProvider {
   static Future<void> logout() async {
     await _auth.signOut();
   }
-
-  // Future<UserCredential> signInWithGoogle() async {
-  //   // Trigger the authentication flow
-  //   final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-  //   // Obtain the auth details from the request
-  //   final GoogleSignInAuthentication? googleAuth =
-  //       await googleUser?.authentication;
-
-  //   // Create a new credential
-  //   final credential = GoogleAuthProvider.credential(
-  //     accessToken: googleAuth?.accessToken,
-  //     idToken: googleAuth?.idToken,
-  //   );
-
-  //   // Once signed in, return the UserCredential
-  //   return await FirebaseAuth.instance.signInWithCredential(credential);
-  // }
 }

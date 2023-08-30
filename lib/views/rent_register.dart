@@ -1,123 +1,254 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rentatouille/models/rent_props.dart';
 
-import '../models/rent_props.dart';
+import '../services/auth_provider.dart';
+import '../services/register_user.dart';
 
-class RentScreen extends StatelessWidget {
-  final TextEditingController _propertyNameController = TextEditingController();
-  final TextEditingController _locationController = TextEditingController();
-  final TextEditingController _monthlyRentController = TextEditingController();
-  final TextEditingController _propertyDescriptionController =
-      TextEditingController();
+class RentRegisterPage extends StatefulWidget {
+  const RentRegisterPage({super.key});
+
+  @override
+  _RegisterPageState createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RentRegisterPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  late TextEditingController _emailController;
+  late TextEditingController _passwordController;
+  late TextEditingController _confirmPasswordController;
+  late TextEditingController _propertyNameController;
+  late TextEditingController _locationController;
+  late TextEditingController _monthlyRentController;
+  late TextEditingController _propertyDescriptionController;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
+    _propertyNameController = TextEditingController();
+    _locationController = TextEditingController();
+    _monthlyRentController = TextEditingController();
+    _propertyDescriptionController = TextEditingController();
+  }
+
+  void _register() async {
+    try {
+      FirebaseService firebaseService = FirebaseService();
+
+      if (_confirmPasswordController.text != _passwordController.text) {
+        debugPrint("Password does not Match!");
+        return;
+      }
+
+      // Register user using AuthProvider
+      await AuthProvider.register(
+        context,
+        _passwordController.text,
+        _emailController.text,
+      );
+
+      // User is registered, now store property data
+      await firebaseService.rentProperty(
+        propertyName: _propertyNameController.text,
+        location: _locationController.text,
+        monthlyRent: double.parse(_monthlyRentController.text),
+        propertyDescription: _propertyDescriptionController.text,
+      );
+
+      // Navigate to a new screen after successful registration.
+    } catch (e) {
+      print('Registration error: $e');
+      // Display a user-friendly error message to the user on the UI
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 40, 39, 39),
-        title: Center(child: Text('Rent a Property')),
+        title: Text('Register'),
       ),
       body: Container(
-        color: Colors.black, // Set the background color to black
+        color: Colors.black,
         child: Center(
           child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  'Tell us about the property you want to rent',
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white), // Set text color to white
+                SizedBox(height: 20),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    controller: _emailController,
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      labelStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(Icons.email, color: Colors.white),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    controller: _passwordController,
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      labelStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(Icons.lock, color: Colors.white),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    obscureText: true,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    controller: _confirmPasswordController,
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Confirm Password',
+                      labelStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(Icons.lock, color: Colors.white),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    obscureText: true,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    controller: _propertyNameController,
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Property Name',
+                      labelStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(Icons.home, color: Colors.white),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    controller: _locationController,
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Location',
+                      labelStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(Icons.location_on, color: Colors.white),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    controller: _monthlyRentController,
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Monthly Rent',
+                      labelStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(Icons.attach_money, color: Colors.white),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    controller: _propertyDescriptionController,
+                    style: TextStyle(color: Colors.white),
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      labelText: 'Property Description',
+                      labelStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(Icons.description, color: Colors.white),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
                 ),
                 SizedBox(height: 20),
-                TextFormField(
-                  controller: _propertyNameController,
-                  style: TextStyle(color: Colors.white), // Set field text color
-                  decoration: InputDecoration(
-                    labelText: 'Property Name',
-
-                    labelStyle:
-                        TextStyle(color: Colors.white), // Set label text color
-                    hintStyle:
-                        TextStyle(color: Colors.white), // Set hint text color
-                  ),
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: _locationController,
-                  style: TextStyle(color: Colors.white), // Set field text color
-                  decoration: InputDecoration(
-                    labelText: 'Location',
-                    labelStyle:
-                        TextStyle(color: Colors.white), // Set label text color
-                    hintStyle:
-                        TextStyle(color: Colors.white), // Set hint text color
-                  ),
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: _monthlyRentController,
-                  style: TextStyle(color: Colors.white), // Set field text color
-                  decoration: InputDecoration(
-                    labelText: 'Monthly Rent',
-                    labelStyle:
-                        TextStyle(color: Colors.white), // Set label text color
-                    hintStyle:
-                        TextStyle(color: Colors.white), // Set hint text color
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: _propertyDescriptionController,
-                  style: TextStyle(color: Colors.white), // Set field text color
-                  maxLines: 4,
-                  decoration: InputDecoration(
-                    labelText: 'Property Description',
-                    labelStyle:
-                        TextStyle(color: Colors.white), // Set label text color
-                    hintStyle:
-                        TextStyle(color: Colors.white), // Set hint text color
-                  ),
-                ),
-                SizedBox(height: 20),
-                Center(
+                SizedBox(
+                  width: 150,
                   child: ElevatedButton(
-                    onPressed: () {
-                      try {
-                        submitRentPropertyData(
-                          propertyName: _propertyNameController.text,
-                          location: _locationController.text,
-                          monthlyRent:
-                              double.parse(_monthlyRentController.text),
-                          propertyDescription:
-                              _propertyDescriptionController.text,
-                        );
-                      } catch (e) {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Text('Error'),
-                            content: Text('Invalid input for Monthly Rent.'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text('OK'),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-                    },
-                    child: Text('Submit'),
+                    onPressed: _register, // Call the _register function
+                    child: Text('Register'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          Colors.red, // Set button background color
-                      foregroundColor: Colors.white, // Set button text color
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   ),
                 ),

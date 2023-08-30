@@ -1,13 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class RentData {
-  static Future<void> submitRentPropertyData({
+class FirebaseService {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> rentProperty({
     required String propertyName,
     required String location,
     required double monthlyRent,
     required String propertyDescription,
   }) async {
     try {
+      // Store rent property data
       await FirebaseFirestore.instance.collection('rentProperties').add({
         'propertyName': propertyName,
         'location': location,
@@ -15,8 +19,10 @@ class RentData {
         'propertyDescription': propertyDescription,
         // Add more fields if needed
       });
+
+      // User is registered and logged in, navigate to a new screen.
     } catch (e) {
-      print('Error submitting rent property data: $e');
+      print('Registration error: $e');
     }
   }
 }
