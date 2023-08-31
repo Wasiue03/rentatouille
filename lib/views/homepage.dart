@@ -5,12 +5,23 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rentatouille/views/seller_form.dart';
 
+import 'comment_screen.dart';
+
 class SellerHomeScreen extends StatefulWidget {
   @override
   _SellerHomeScreenState createState() => _SellerHomeScreenState();
 }
 
 class _SellerHomeScreenState extends State<SellerHomeScreen> {
+  void _goToCommentsScreen(String postId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CommentsScreen(postId: postId),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -140,7 +151,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                 children: [
                                   TextButton.icon(
                                     onPressed: () {
-                                      // Handle "Comments" action
+                                      _goToCommentsScreen('yourPostId');
                                     },
                                     icon: Icon(Icons.comment,
                                         color: Colors.red), // Set icon color
