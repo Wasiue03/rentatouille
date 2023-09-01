@@ -1,107 +1,211 @@
 import 'package:flutter/material.dart';
-import 'package:rentatouille/views/renter_screens/rent_form.dart';
-import 'package:rentatouille/views/renter_screens/rent_register.dart';
-import 'package:rentatouille/views/renter_screens/renter_homepage.dart';
-import 'package:rentatouille/views/seller_screens/seller_register.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rentatouille/models/user_auth.dart';
+import 'package:rentatouille/views/seller_screens/seller_homepage.dart';
+import '../../services/auth_provider.dart';
 
-import '../models/user_auth.dart';
-
-class RegisterScreen extends StatefulWidget {
+class SellerRegisterPage extends StatefulWidget {
   @override
-  _RegisterScreenState createState() => _RegisterScreenState();
+  _SellerRegisterPageState createState() => _SellerRegisterPageState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
-  String _selectedOption = 'Rent'; // Default selection
+class _SellerRegisterPageState extends State<SellerRegisterPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  late TextEditingController _emailController;
+  late TextEditingController _passwordController;
+  late TextEditingController _confirmPasswordController;
+  late TextEditingController _propertyNameController;
+  late TextEditingController _locationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
+    _propertyNameController = TextEditingController();
+    _locationController = TextEditingController();
+  }
+
+  void _register() async {
+    try {
+      if (_passwordController.text != _confirmPasswordController.text) {
+        // Show an error message or Snackbar indicating password mismatch.
+        return;
+      }
+
+      // Register seller using AuthProvider
+      await AuthProvider.register(
+        context,
+        _passwordController.text,
+        _emailController.text,
+        UserType.seller, // Set the user type as 'seller'
+      );
+
+      // Navigate to a new screen after successful registration.
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => SellerHomeScreen(),
+        ),
+      );
+    } catch (e) {
+      print('Registration error: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    _propertyNameController.dispose();
+    _locationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 40, 39, 39),
-        title: Center(child: Text('Registration')),
+        title: Text('Seller Registration'),
       ),
       body: Container(
         color: Colors.black,
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Are you here looking to...',
-                style: TextStyle(fontSize: 18, color: Colors.white),
-              ),
-              SizedBox(height: 20),
-              ListTile(
-                title: Text(
-                  'Rent a Property',
-                ),
-                textColor: Colors.white,
-                leading: Radio(
-                  activeColor: Colors.red,
-                  fillColor: MaterialStateProperty.all(Colors.red),
-                  value: 'Rent',
-                  groupValue: _selectedOption,
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedOption = value!;
-                    });
-                  },
-                ),
-              ),
-              ListTile(
-                title: Text('Sell a Property'),
-                textColor: Colors.white,
-                leading: Radio(
-                  fillColor: MaterialStateProperty.all(Colors.red),
-                  value: 'Sell',
-                  groupValue: _selectedOption,
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedOption = value!;
-                    });
-                  },
-                ),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(10), // Set the border radius here
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 20),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    controller: _emailController,
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      labelStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(Icons.email, color: Colors.white),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
                   ),
                 ),
-                onPressed: () {
-                  // Determine the user type based on the selected option
-                  UserType userType = _selectedOption == 'Rent'
-                      ? UserType.renter
-                      : UserType.seller;
-
-                  // Navigate to the registration page and pass the user type as an argument
-                  if (_selectedOption == 'Rent') {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            RentRegisterPage(userType: userType),
+                SizedBox(height: 10),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    controller: _passwordController,
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      labelStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(Icons.lock, color: Colors.white),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                    );
-                  } else if (_selectedOption == 'Sell') {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            SellerRegisterPage(userType: userType),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                    );
-                  }
-                },
-                child: Text(
-                  'Continue',
+                    ),
+                    obscureText: true,
+                  ),
                 ),
-              ),
-            ],
+                SizedBox(height: 10),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    controller: _confirmPasswordController,
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Confirm Password',
+                      labelStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(Icons.lock, color: Colors.white),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    obscureText: true,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    controller: _propertyNameController,
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Property Name',
+                      labelStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(Icons.home, color: Colors.white),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    controller: _locationController,
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Location',
+                      labelStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(Icons.location_on, color: Colors.white),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                SizedBox(
+                  width: 150,
+                  child: ElevatedButton(
+                    onPressed: _register,
+                    child: Text('Register'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
-import 'package:rentatouille/services/comments_service.dart';
 import 'package:rentatouille/views/comment_screen.dart';
-import 'package:rentatouille/views/seller_screens/seller_form.dart';
 
 class SellerHomeScreen extends StatefulWidget {
   @override
@@ -11,11 +8,6 @@ class SellerHomeScreen extends StatefulWidget {
 }
 
 class _SellerHomeScreenState extends State<SellerHomeScreen> {
-  final TextEditingController _commentController = TextEditingController();
-  final TextEditingController _replyController = TextEditingController();
-  late Stream<QuerySnapshot> _commentsStream;
-  final FirebaseService _firebaseService = FirebaseService();
-
   void _goToCommentsScreen(String postId) {
     Navigator.push(
       context,
@@ -30,16 +22,18 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text('Seller Home'),
+        title: Text(
+          'Seller Home',
+          style: TextStyle(
+            fontSize: 24, // Increase the font size
+          ),
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.message),
             onPressed: () {
               // Handle the action for messages
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MessagesScreen()),
-              );
+              // Replace with your logic
             },
           ),
         ],
@@ -55,30 +49,22 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                 IconButton(
                   icon: Icon(Icons.add, color: Colors.white),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SellPosts()),
-                    );
+                    // Handle the action for adding posts
+                    // Replace with your logic
                   },
                 ),
                 IconButton(
                   icon: Icon(Icons.notifications, color: Colors.white),
                   onPressed: () {
                     // Handle the action for showing notifications
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => NotificationsScreen()),
-                    );
+                    // Replace with your logic
                   },
                 ),
                 IconButton(
                   icon: Icon(Icons.newspaper, color: Colors.white),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => News()),
-                    );
+                    // Handle the action for news
+                    // Replace with your logic
                   },
                 ),
               ],
@@ -106,7 +92,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                       final propertyName = post['propertyName'];
                       final location = post['location'];
                       final propertyDescription = post['propertyDescription'];
-                      final postId = posts[index].id; // Add this line
+                      final postId = posts[index].id;
 
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -126,6 +112,8 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                     propertyName,
                                     style: TextStyle(
                                       color: Colors.white,
+                                      fontSize: 20, // Increase font size
+                                      fontWeight: FontWeight.bold, // Bold text
                                     ),
                                   ),
                                   subtitle: Text(
@@ -151,14 +139,16 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                 children: [
                                   TextButton.icon(
                                     onPressed: () {
-                                      _goToCommentsScreen(
-                                          postId); // Use the postId
+                                      _goToCommentsScreen(postId);
                                     },
                                     icon:
                                         Icon(Icons.comment, color: Colors.red),
                                     label: Text(
                                       'Comments',
-                                      style: TextStyle(color: Colors.red),
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 16, // Increase font size
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -177,12 +167,4 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
       ),
     );
   }
-
-  NotificationsScreen() {}
-
-  MessagesScreen() {}
-
-  News() {}
 }
-
-// MessagesScreen and NotificationsScreen remain the same

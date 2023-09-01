@@ -7,10 +7,6 @@ import '../../models/user_auth.dart';
 import '../../services/auth_provider.dart';
 
 class SellerRegisterPage extends StatefulWidget {
-  final UserType userType; // Define the userType parameter
-
-  SellerRegisterPage({required this.userType});
-
   @override
   _SellerRegisterPageState createState() => _SellerRegisterPageState();
 }
@@ -53,14 +49,13 @@ class _SellerRegisterPageState extends State<SellerRegisterPage> {
       );
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => SellerHomeScreen(),
-        ),
+            builder: (context) =>
+                SellerHomeScreen()), // Replace HomeScreen with your actual home screen widget
       );
 
       // User is registered and logged in, navigate to a new screen.
     } catch (e) {
       print('Registration error: $e');
-      // Handle and display the registration error to the user.
     }
   }
 
@@ -96,7 +91,10 @@ class _SellerRegisterPageState extends State<SellerRegisterPage> {
                     style: TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       labelText: 'Email',
-                      labelStyle: TextStyle(color: Colors.white),
+                      labelStyle: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
                       hintStyle: TextStyle(color: Colors.white),
                       prefixIcon: Icon(Icons.email, color: Colors.white),
                       focusedBorder: OutlineInputBorder(
