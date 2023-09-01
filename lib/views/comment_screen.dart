@@ -26,6 +26,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
   }
 
   void _submitReply(String commentId) async {
+    print('Submitting reply to comment with ID: $commentId');
     final replyText = _replyController.text;
     if (replyText.isNotEmpty) {
       await _firebaseService.addCommentReply(commentId, replyText);

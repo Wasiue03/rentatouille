@@ -1,22 +1,26 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rentatouille/views/homepage.dart';
+import 'package:rentatouille/models/rent_props.dart';
 
-import '../models/sell_props.dart';
-import '../services/auth_provider.dart';
+import '../../services/auth_provider.dart';
 
-class SellerRegisterPage extends StatefulWidget {
+class RentRegisterPage extends StatefulWidget {
+  const RentRegisterPage({super.key});
+
   @override
-  _SellerRegisterPageState createState() => _SellerRegisterPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _SellerRegisterPageState extends State<SellerRegisterPage> {
+class _RegisterPageState extends State<RentRegisterPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
   late TextEditingController _confirmPasswordController;
   late TextEditingController _propertyNameController;
   late TextEditingController _locationController;
+  late TextEditingController _monthlyRentController;
+  late TextEditingController _propertyDescriptionController;
 
   @override
   void initState() {
@@ -26,53 +30,46 @@ class _SellerRegisterPageState extends State<SellerRegisterPage> {
     _confirmPasswordController = TextEditingController();
     _propertyNameController = TextEditingController();
     _locationController = TextEditingController();
+    _monthlyRentController = TextEditingController();
+    _propertyDescriptionController = TextEditingController();
   }
 
   void _register() async {
-    FirebaseService firebaseService = FirebaseService();
     try {
-      if (_passwordController.text != _confirmPasswordController.text) {
-        // Show an error message or Snackbar indicating password mismatch.
+      FirebaseService firebaseService = FirebaseService();
+
+      if (_confirmPasswordController.text != _passwordController.text) {
+        debugPrint("Password does not Match!");
         return;
       }
 
+      // Register user using AuthProvider
       await AuthProvider.register(
         context,
         _passwordController.text,
         _emailController.text,
       );
-      await firebaseService.sellProperty(
+
+      // User is registered, now store property data
+      await firebaseService.rentProperty(
         propertyName: _propertyNameController.text,
         location: _locationController.text,
-      );
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-            builder: (context) =>
-                SellerHomeScreen()), // Replace HomeScreen with your actual home screen widget
+        monthlyRent: double.parse(_monthlyRentController.text),
+        propertyDescription: _propertyDescriptionController.text,
       );
 
-      // User is registered and logged in, navigate to a new screen.
+      // Navigate to a new screen after successful registration.
     } catch (e) {
       print('Registration error: $e');
+      // Display a user-friendly error message to the user on the UI
     }
-  }
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    _propertyNameController.dispose();
-    _locationController.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 40, 39, 39),
-        title: Text('Seller Registration'),
+        title: Text('Register'),
       ),
       body: Container(
         color: Colors.black,
@@ -193,11 +190,57 @@ class _SellerRegisterPageState extends State<SellerRegisterPage> {
                     ),
                   ),
                 ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    controller: _monthlyRentController,
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Monthly Rent',
+                      labelStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(Icons.attach_money, color: Colors.white),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    controller: _propertyDescriptionController,
+                    style: TextStyle(color: Colors.white),
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      labelText: 'Property Description',
+                      labelStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(Icons.description, color: Colors.white),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
                 SizedBox(height: 20),
                 SizedBox(
                   width: 150,
                   child: ElevatedButton(
-                    onPressed: _register,
+                    onPressed: _register, // Call the _register function
                     child: Text('Register'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,

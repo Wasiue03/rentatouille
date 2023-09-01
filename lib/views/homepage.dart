@@ -1,10 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:rentatouille/views/seller_form.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:rentatouille/views/seller_form.dart';
-
 import 'comment_screen.dart';
 
 class SellerHomeScreen extends StatefulWidget {
@@ -13,6 +8,16 @@ class SellerHomeScreen extends StatefulWidget {
 }
 
 class _SellerHomeScreenState extends State<SellerHomeScreen> {
+  Map<String, bool> _interestedStatus = {}; // Store the interested state
+
+  void _toggleInterest(String postId) {
+    setState(() {
+      _interestedStatus[postId] = !_interestedStatus[postId]!;
+    });
+    // Send notification to seller about the change in interest
+    // You need to implement Firebase Cloud Messaging here
+  }
+
   void _goToCommentsScreen(String postId) {
     Navigator.push(
       context,
@@ -28,18 +33,6 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         title: Text('Seller Home'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.message),
-            onPressed: () {
-              // Handle the action for messages
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MessagesScreen()),
-              );
-            },
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -52,34 +45,10 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                 IconButton(
                   icon: Icon(Icons.add, color: Colors.white),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SellPosts()),
-                    );
+                    // Navigate to the form for adding a new post
                   },
                 ),
-                IconButton(
-                  icon: Icon(Icons.notifications, color: Colors.white),
-                  onPressed: () {
-                    // Handle the action for showing notifications
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => NotificationsScreen()),
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.newspaper_outlined, color: Colors.white),
-                  onPressed: () {
-                    // Handle the action for showing notifications
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => NotificationsScreen()),
-                    );
-                  },
-                ),
+                // ... Other buttons ...
               ],
             ),
           ),
@@ -105,17 +74,15 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                       final propertyName = post['propertyName'];
                       final location = post['location'];
                       final propertyDescription = post['propertyDescription'];
-
+                      final postId = posts[index].id;
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Card(
-                          color: Colors.black, // Set card background color
+                          color: Colors.black,
                           elevation: 4,
                           shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(8), // Set border radius
-                            side: BorderSide(
-                                color: Colors.white), // Add border line
+                            borderRadius: BorderRadius.circular(8),
+                            side: BorderSide(color: Colors.white),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +98,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                   subtitle: Text(
                                     location ?? '',
                                     style: TextStyle(
-                                      color: Colors.white, // Set text color
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),
@@ -141,59 +108,66 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                   child: Text(
                                     propertyDescription,
                                     style: TextStyle(
-                                      color: Colors.white, // Set text color
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),
                               Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  TextButton.icon(
-                                    onPressed: () {
-                                      _goToCommentsScreen('yourPostId');
-                                    },
-                                    icon: Icon(Icons.comment,
-                                        color: Colors.red), // Set icon color
-                                    label: Text(
-                                      'Comments',
-                                      style: TextStyle(
-                                          color: Colors.red), // Set text color
-                                    ),
-                                  ),
-                                  TextButton.icon(
-                                    onPressed: () {
-                                      // Handle "Question" action
-                                    },
-                                    icon: Icon(Icons.question_answer,
-                                        color: Colors.red), // Set icon color
-                                    label: Text(
-                                      'Question',
-                                      style: TextStyle(
-                                          color: Colors.red), // Set text color
-                                    ),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        onPressed: () {
+                                          _goToCommentsScreen('yourPostId');
+                                        },
+                                        icon: Icon(Icons.comment,
+                                            color: Colors.red),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          _goToCommentsScreen('yourPostId');
+                                        },
+                                        child: Text(
+                                          'Comments',
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          _toggleInterest(
+                                              postId); // Toggle the interest state
+                                        },
+                                        child: AnimatedSwitcher(
+                                          duration: Duration(milliseconds: 300),
+                                          transitionBuilder:
+                                              (child, animation) {
+                                            return ScaleTransition(
+                                              scale: animation,
+                                              child: child,
+                                            );
+                                          },
+                                          child: _interestedStatus[postId] ==
+                                                  true
+                                              ? Text(
+                                                  'Sent') // Display "Sent" if interested
+                                              : Text(
+                                                  'Interested'), // Display "Interested" by default
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: const Color.fromARGB(
+                                              255, 18, 100, 21),
+                                          foregroundColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    // Handle "Interested" action
-                                  },
-                                  child: Text('Interested'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        const Color.fromARGB(255, 18, 100, 21),
-
-                                    foregroundColor:
-                                        Colors.white, // Set text color
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          8), // Set border radius
-                                    ),
-                                  ),
-                                ),
                               ),
                             ],
                           ),
@@ -206,42 +180,6 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// MessagesScreen and NotificationsScreen remain the same
-
-class MessagesScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Messages'),
-      ),
-      body: Center(
-        child: Text(
-          'Messages Screen',
-          style: TextStyle(color: Colors.black),
-        ),
-      ),
-    );
-  }
-}
-
-class NotificationsScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Notifications'),
-      ),
-      body: Center(
-        child: Text(
-          'Notifications Screen',
-          style: TextStyle(color: Colors.black),
-        ),
       ),
     );
   }

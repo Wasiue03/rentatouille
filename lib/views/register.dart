@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:rentatouille/views/rent_form.dart';
-import 'package:rentatouille/views/rent_register.dart';
-import 'package:rentatouille/views/seller_form.dart';
-import 'package:rentatouille/views/seller_register.dart';
+import 'package:rentatouille/views/renter_screens/rent_form.dart';
+import 'package:rentatouille/views/renter_screens/rent_register.dart';
+import 'package:rentatouille/views/seller_screens/seller_register.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override

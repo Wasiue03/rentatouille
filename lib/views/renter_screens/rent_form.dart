@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/rent_props.dart';
+import '../../models/rent_props.dart';
 
 class RentScreen extends StatelessWidget {
   final TextEditingController _propertyNameController = TextEditingController();

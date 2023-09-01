@@ -5,9 +5,14 @@ class FirebaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> addCommentReply(String commentId, String replyText) async {
-    await _firestore.collection('Comments').doc(commentId).update({
-      'replies': FieldValue.arrayUnion([replyText]),
-    });
+    try {
+      await _firestore.collection('Comments').doc(commentId).update({
+        'replies': FieldValue.arrayUnion([replyText]),
+      });
+    } catch (e) {
+      print('Error submitting reply: $e');
+      throw e;
+    }
   }
 
   Future<void> addComment(String postId, String commentText) async {
