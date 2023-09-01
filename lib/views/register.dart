@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:rentatouille/views/renter_screens/rent_form.dart';
 import 'package:rentatouille/views/renter_screens/rent_register.dart';
+import 'package:rentatouille/views/renter_screens/renter_homepage.dart';
 import 'package:rentatouille/views/seller_screens/seller_register.dart';
+
+import '../models/user_auth.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -70,18 +73,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
                 onPressed: () {
-                  // Navigate to the next screen based on the selected option
+                  // Determine the user type based on the selected option
+                  UserType userType = _selectedOption == 'Rent'
+                      ? UserType.renter
+                      : UserType.seller;
+
+                  // Navigate to the registration page and pass the user type as an argument
                   if (_selectedOption == 'Rent') {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => RentRegisterPage()),
+                        builder: (context) =>
+                            RentRegisterPage(userType: userType),
+                      ),
                     );
                   } else if (_selectedOption == 'Sell') {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => SellerRegisterPage()),
+                        builder: (context) =>
+                            SellerRegisterPage(userType: userType),
+                      ),
                     );
                   }
                 },

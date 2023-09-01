@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'comment_screen.dart';
+import 'package:intl/intl.dart';
+import 'package:rentatouille/services/comments_service.dart';
+import 'package:rentatouille/views/comment_screen.dart';
+import 'package:rentatouille/views/seller_screens/seller_form.dart';
 
 class SellerHomeScreen extends StatefulWidget {
   @override
@@ -8,15 +11,10 @@ class SellerHomeScreen extends StatefulWidget {
 }
 
 class _SellerHomeScreenState extends State<SellerHomeScreen> {
-  Map<String, bool> _interestedStatus = {}; // Store the interested state
-
-  void _toggleInterest(String postId) {
-    setState(() {
-      _interestedStatus[postId] = !_interestedStatus[postId]!;
-    });
-    // Send notification to seller about the change in interest
-    // You need to implement Firebase Cloud Messaging here
-  }
+  final TextEditingController _commentController = TextEditingController();
+  final TextEditingController _replyController = TextEditingController();
+  late Stream<QuerySnapshot> _commentsStream;
+  final FirebaseService _firebaseService = FirebaseService();
 
   void _goToCommentsScreen(String postId) {
     Navigator.push(
@@ -33,6 +31,18 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         title: Text('Seller Home'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.message),
+            onPressed: () {
+              // Handle the action for messages
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MessagesScreen()),
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -45,10 +55,32 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                 IconButton(
                   icon: Icon(Icons.add, color: Colors.white),
                   onPressed: () {
-                    // Navigate to the form for adding a new post
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SellPosts()),
+                    );
                   },
                 ),
-                // ... Other buttons ...
+                IconButton(
+                  icon: Icon(Icons.notifications, color: Colors.white),
+                  onPressed: () {
+                    // Handle the action for showing notifications
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => NotificationsScreen()),
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.newspaper, color: Colors.white),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => News()),
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -74,7 +106,8 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                       final propertyName = post['propertyName'];
                       final location = post['location'];
                       final propertyDescription = post['propertyDescription'];
-                      final postId = posts[index].id;
+                      final postId = posts[index].id; // Add this line
+
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Card(
@@ -114,58 +147,19 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                 ),
                               Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        onPressed: () {
-                                          _goToCommentsScreen('yourPostId');
-                                        },
-                                        icon: Icon(Icons.comment,
-                                            color: Colors.red),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          _goToCommentsScreen('yourPostId');
-                                        },
-                                        child: Text(
-                                          'Comments',
-                                          style: TextStyle(color: Colors.red),
-                                        ),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          _toggleInterest(
-                                              postId); // Toggle the interest state
-                                        },
-                                        child: AnimatedSwitcher(
-                                          duration: Duration(milliseconds: 300),
-                                          transitionBuilder:
-                                              (child, animation) {
-                                            return ScaleTransition(
-                                              scale: animation,
-                                              child: child,
-                                            );
-                                          },
-                                          child: _interestedStatus[postId] ==
-                                                  true
-                                              ? Text(
-                                                  'Sent') // Display "Sent" if interested
-                                              : Text(
-                                                  'Interested'), // Display "Interested" by default
-                                        ),
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color.fromARGB(
-                                              255, 18, 100, 21),
-                                          foregroundColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                  TextButton.icon(
+                                    onPressed: () {
+                                      _goToCommentsScreen(
+                                          postId); // Use the postId
+                                    },
+                                    icon:
+                                        Icon(Icons.comment, color: Colors.red),
+                                    label: Text(
+                                      'Comments',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -183,4 +177,12 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
       ),
     );
   }
+
+  NotificationsScreen() {}
+
+  MessagesScreen() {}
+
+  News() {}
 }
+
+// MessagesScreen and NotificationsScreen remain the same

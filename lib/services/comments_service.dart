@@ -18,7 +18,7 @@ class FirebaseService {
   Future<void> addComment(String postId, String commentText) async {
     try {
       await _firestore.collection('Comments').add({
-        'postId': postId,
+        'postId': postId, // Include the postId in the comment data
         'commentText': commentText,
         'timestamp': FieldValue.serverTimestamp(),
         'replies': [],

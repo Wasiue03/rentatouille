@@ -48,9 +48,19 @@ class _CommentsScreenState extends State<CommentsScreen> {
   void _submitComment() async {
     final commentText = _commentController.text;
     if (commentText.isNotEmpty) {
-      await _firebaseService.addComment(widget.postId, commentText);
+      await _firebaseService.addComment(
+          widget.postId, commentText); // Include widget.postId as the postId
       _commentController.clear();
     }
+  }
+
+  void _goToCommentsScreen(String postId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CommentsScreen(postId: postId),
+      ),
+    );
   }
 
   @override

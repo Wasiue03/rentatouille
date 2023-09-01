@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rentatouille/views/homepage.dart';
+import 'package:rentatouille/views/seller_screens/seller_homepage.dart';
 
 import '../../models/sell_props.dart';
+import '../../models/user_auth.dart';
 import '../../services/auth_provider.dart';
 
 class SellerRegisterPage extends StatefulWidget {
+  final UserType userType; // Define the userType parameter
+
+  SellerRegisterPage({required this.userType});
+
   @override
   _SellerRegisterPageState createState() => _SellerRegisterPageState();
 }
@@ -40,6 +45,7 @@ class _SellerRegisterPageState extends State<SellerRegisterPage> {
         context,
         _passwordController.text,
         _emailController.text,
+        UserType.seller,
       );
       await firebaseService.sellProperty(
         propertyName: _propertyNameController.text,
@@ -47,13 +53,14 @@ class _SellerRegisterPageState extends State<SellerRegisterPage> {
       );
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-            builder: (context) =>
-                SellerHomeScreen()), // Replace HomeScreen with your actual home screen widget
+          builder: (context) => SellerHomeScreen(),
+        ),
       );
 
       // User is registered and logged in, navigate to a new screen.
     } catch (e) {
       print('Registration error: $e');
+      // Handle and display the registration error to the user.
     }
   }
 

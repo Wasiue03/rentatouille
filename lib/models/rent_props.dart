@@ -9,6 +9,7 @@ class FirebaseService {
     required String location,
     required double monthlyRent,
     required String propertyDescription,
+    required String userId,
   }) async {
     try {
       // Store rent property data
