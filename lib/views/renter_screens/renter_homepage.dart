@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../services/Notifications/notification.dart';
 import '../Comments/comment_screen.dart';
+import '../news/news.dart';
 
 class RenterHomeScreen extends StatefulWidget {
   @override
@@ -39,9 +40,12 @@ class _RenterHomeScreenState extends State<RenterHomeScreen> {
         title: Text('Renter Home'),
         actions: [
           IconButton(
-            icon: Icon(Icons.message),
+            icon: Icon(Icons.newspaper),
             onPressed: () {
-              // Handle the action for messages
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NewsPage()),
+              );
             },
           ),
         ],
