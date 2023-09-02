@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rentatouille/models/rent_props.dart';
+import 'package:rentatouille/models/Renter/rent_props.dart';
 import 'package:rentatouille/views/renter_screens/renter_homepage.dart';
 
-import '../../models/user_auth.dart';
-import '../../services/auth_provider.dart';
+import '../../models/User_Auth/user_auth.dart';
+import '../../services/Provider/auth_provider.dart';
 
 class RentRegisterPage extends StatefulWidget {
   final UserType userType; // Define the userType parameter

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rentatouille/views/register.dart';
-import 'login.dart';
+import 'package:rentatouille/views/Register/register.dart';
+import '../Login/login.dart';
 
 class LandingScreen extends StatelessWidget {
   const LandingScreen({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Import this package to format timestamps
 
-import '../../models/notify_model.dart'; // Import your notification model
+import '../../models/notifications/notify_model.dart'; // Import your notification model
 
 class NotificationScreen extends StatelessWidget {
   final List<NotificationModel> notifications;

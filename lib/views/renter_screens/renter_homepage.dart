@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../services/notification.dart';
-import '../comment_screen.dart';
+import '../../services/Notifications/notification.dart';
+import '../Comments/comment_screen.dart';
 
 class RenterHomeScreen extends StatefulWidget {
   @override

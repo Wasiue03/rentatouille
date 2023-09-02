@@ -1,12 +1,13 @@
 // seller_home_screen.dart
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:rentatouille/models/notify_model.dart';
-import 'package:rentatouille/views/comment_screen.dart';
+import 'package:rentatouille/models/notifications/notify_model.dart';
+import 'package:rentatouille/views/Comments/comment_screen.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:rentatouille/views/news/news.dart';
 import 'package:rentatouille/views/seller_screens/seller_form.dart';
 
-import '../../services/notification_service.dart';
+import '../../services/Notifications/notification_service.dart';
 import 'notification_screen.dart';
 
 class SellerHomeScreen extends StatefulWidget {
@@ -65,15 +66,6 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
             fontSize: 24, // Increase the font size
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.message),
-            onPressed: () {
-              // Handle the action for messages
-              // Replace with your logic
-            },
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -106,7 +98,10 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                 IconButton(
                   icon: Icon(Icons.newspaper, color: Colors.white),
                   onPressed: () {
-                    // Handle the action for news
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => NewsPage()),
+                    );
                     // Replace with your logic
                   },
                 ),

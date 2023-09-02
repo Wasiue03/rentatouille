@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../models/user_auth.dart';
-import '../views/renter_screens/renter_homepage.dart';
-import '../views/seller_screens/seller_homepage.dart';
+import '../../models/User_Auth/user_auth.dart';
+import '../../views/renter_screens/renter_homepage.dart';
+import '../../views/seller_screens/seller_homepage.dart';
 
 class AuthProvider {
   static final _auth = FirebaseAuth.instance;

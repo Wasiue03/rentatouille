@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rentatouille/views/seller_screens/seller_homepage.dart';
 
-import '../../models/sell_props.dart';
-import '../../models/user_auth.dart';
-import '../../services/auth_provider.dart';
+import '../../models/Seller/sell_props.dart';
+import '../../models/User_Auth/user_auth.dart';
+import '../../services/Provider/auth_provider.dart';
 
 class SellerRegisterPage extends StatefulWidget {
   @override

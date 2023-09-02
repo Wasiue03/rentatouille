@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../services/sell_posts.dart';
+import '../../services/Posts/sell_posts.dart';
 
 class SellPosts extends StatefulWidget {
   @override
