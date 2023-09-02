@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../services/notification.dart';
 import '../comment_screen.dart';
 
 class RenterHomeScreen extends StatefulWidget {
@@ -123,6 +124,15 @@ class _RenterHomeScreenState extends State<RenterHomeScreen> {
                                   ),
                                   ElevatedButton(
                                     onPressed: () {
+                                      // Replace 'SELLER_FCM_TOKEN' with the actual seller's FCM token
+                                      String sellerFcmToken =
+                                          'c8UAT70aQZS2Q94SU71FBN:APA91bFliczWwnAOCmyBOHqdZZ2u4T6An5RxzIeVZXny_ubE3u0WkzJHiN0TYPu2CNeGwZHUH82N9M-2bp5ywXvOuyz5IIeqPCAvKqVGoeamvHFp3ZBa37VFc9AdpHrCsyTUUw-E1vh4';
+
+                                      // Send notification to the seller
+                                      FirebaseApi().sendNotificationToSeller(
+                                          sellerFcmToken);
+
+                                      // Update the UI or set the state to indicate that the notification has been sent
                                       _toggleInterest(postId);
                                     },
                                     child: AnimatedSwitcher(
@@ -145,7 +155,7 @@ class _RenterHomeScreenState extends State<RenterHomeScreen> {
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                     ),
-                                  ),
+                                  )
                                 ],
                               ),
                             ],

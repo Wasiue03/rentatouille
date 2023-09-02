@@ -1,6 +1,13 @@
+// seller_home_screen.dart
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rentatouille/models/notify_model.dart';
 import 'package:rentatouille/views/comment_screen.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:rentatouille/views/seller_screens/seller_form.dart';
+
+import '../../services/notification_service.dart';
+import 'notification_screen.dart';
 
 class SellerHomeScreen extends StatefulWidget {
   @override
@@ -8,6 +15,36 @@ class SellerHomeScreen extends StatefulWidget {
 }
 
 class _SellerHomeScreenState extends State<SellerHomeScreen> {
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  final NotificationService _notificationService = NotificationService();
+
+  @override
+  void initState() {
+    super.initState();
+    _configureFirebaseMessaging();
+    _notificationService.initialize();
+  }
+
+  void _configureFirebaseMessaging() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      final title = message.notification?.title;
+      final body = message.notification?.body;
+
+      // Show a local notification when a message is received
+      if (title != null && body != null) {
+        _notificationService.showNotification(title, body);
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      // Handle the notification when the app is opened from the background or terminated state
+      // You can navigate to a specific screen or perform an action here
+
+      // After handling the notification, you can cancel it if needed
+      _notificationService.cancelNotification(0);
+    });
+  }
+
   void _goToCommentsScreen(String postId) {
     Navigator.push(
       context,
@@ -49,15 +86,21 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                 IconButton(
                   icon: Icon(Icons.add, color: Colors.white),
                   onPressed: () {
-                    // Handle the action for adding posts
-                    // Replace with your logic
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SellPosts()),
+                    );
                   },
                 ),
                 IconButton(
                   icon: Icon(Icons.notifications, color: Colors.white),
                   onPressed: () {
-                    // Handle the action for showing notifications
-                    // Replace with your logic
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              NotificationScreen(notifications: notifications)),
+                    );
                   },
                 ),
                 IconButton(
