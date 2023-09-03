@@ -1,4 +1,3 @@
-// seller_home_screen.dart
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rentatouille/models/notifications/notify_model.dart';
@@ -31,17 +30,12 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
       final title = message.notification?.title;
       final body = message.notification?.body;
 
-      // Show a local notification when a message is received
       if (title != null && body != null) {
         _notificationService.showNotification(title, body);
       }
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-      // Handle the notification when the app is opened from the background or terminated state
-      // You can navigate to a specific screen or perform an action here
-
-      // After handling the notification, you can cancel it if needed
       _notificationService.cancelNotification(0);
     });
   }
@@ -55,15 +49,36 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
     );
   }
 
+  void _deletePost(String postId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('SellPosts')
+          .doc(postId)
+          .delete();
+      // You can also delete any related data or images associated with the post if needed.
+
+      // Show a success message or handle further actions.
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Post deleted successfully')),
+      );
+    } catch (e) {
+      // Handle any errors that may occur during the deletion process.
+      print('Error deleting post: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting post')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
         title: Text(
-          'Seller Home',
+          'Home',
           style: TextStyle(
-            fontSize: 24, // Increase the font size
+            fontSize: 24,
           ),
         ),
       ),
@@ -102,7 +117,6 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                       context,
                       MaterialPageRoute(builder: (context) => NewsPage()),
                     );
-                    // Replace with your logic
                   },
                 ),
               ],
@@ -127,8 +141,6 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                     itemBuilder: (context, index) {
                       final post = posts[index].data() as Map<String, dynamic>;
 
-                      final propertyName = post['propertyName'];
-                      final location = post['location'];
                       final propertyDescription = post['propertyDescription'];
                       final postId = posts[index].id;
 
@@ -144,23 +156,6 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (propertyName != null)
-                                ListTile(
-                                  title: Text(
-                                    propertyName,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20, // Increase font size
-                                      fontWeight: FontWeight.bold, // Bold text
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    location ?? '',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
                               if (propertyDescription != null)
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
@@ -185,9 +180,15 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                       'Comments',
                                       style: TextStyle(
                                         color: Colors.red,
-                                        fontSize: 16, // Increase font size
+                                        fontSize: 16,
                                       ),
                                     ),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.delete, color: Colors.red),
+                                    onPressed: () {
+                                      _deletePost(postId);
+                                    },
                                   ),
                                 ],
                               ),

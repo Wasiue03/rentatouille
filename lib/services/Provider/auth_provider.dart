@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../../models/User_Auth/user_auth.dart';
 import '../../views/renter_screens/renter_homepage.dart';
 import '../../views/seller_screens/seller_homepage.dart';
@@ -18,6 +19,7 @@ class AuthProvider {
         email: email,
         password: password,
       );
+      await user.user!.sendEmailVerification();
 
       // After successfully creating a user, you can store their user type
       // in your database, such as Firebase Firestore, using their UID.
@@ -109,5 +111,23 @@ class AuthProvider {
         MaterialPageRoute(builder: (context) => SellerHomeScreen()),
       );
     }
+  }
+
+  Future<UserCredential> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 }
