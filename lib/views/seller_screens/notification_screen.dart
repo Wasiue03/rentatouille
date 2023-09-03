@@ -24,7 +24,10 @@ class NotificationScreen extends StatelessWidget {
 
             return ListTile(
               title: Text(notification.title),
-              subtitle: Text(notification.body),
+              subtitle: Text(
+                notification.body,
+                style: TextStyle(color: Colors.white),
+              ),
               trailing: Text(
                 formattedTimestamp,
                 style: TextStyle(color: Colors.grey),

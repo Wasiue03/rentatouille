@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rentatouille/services/payment/payment.dart';
 
 import '../../services/Notifications/notification.dart';
 import '../../widgets/raring_feedback.dart';
 import '../Comments/comment_screen.dart';
 import '../news/news.dart';
+import '../transaction/rent_payment.dart'; // Import the RentPayment class
 
 class RenterHomeScreen extends StatefulWidget {
   const RenterHomeScreen({Key? key});
@@ -42,20 +44,39 @@ class _RenterHomeScreenState extends State<RenterHomeScreen> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         title: Text('Renter Home'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.newspaper),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => NewsPage()),
-              );
-            },
-          ),
-        ],
       ),
       body: Column(
         children: [
+          Container(
+            color: Colors.black,
+            padding: EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.newspaper, color: Colors.white),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => NewsPage()),
+                    );
+                  },
+                ),
+                IconButton(
+                    icon: Icon(Icons.payment, color: Colors.white),
+                    onPressed: () {
+                      // Show the RentPaymentForm
+                      // Show the RentPaymentForm
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                RentPaymentForm(), // Use the RentPaymentForm class
+                          ));
+                    }),
+              ],
+            ),
+          ),
           Expanded(
             child: Container(
               color: Colors.black,
@@ -160,7 +181,7 @@ class _RenterHomeScreenState extends State<RenterHomeScreen> {
                                 },
                                 child: _interestedStatus[postId] == true
                                     ? Text('Sent')
-                                    : Text('Interest'),
+                                    : Text('Interested'),
                               ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
