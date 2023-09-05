@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'dart:io';
 
 import '../../services/Posts/sell_posts.dart';
 
@@ -10,12 +13,42 @@ class SellPosts extends StatefulWidget {
 class _SellPostsState extends State<SellPosts> {
   final TextEditingController _propertyDescriptionController =
       TextEditingController();
+  File? _image; // Variable to store the selected image
 
   @override
   void initState() {
     super.initState();
     _propertyDescriptionController.text =
         'Tell us about the property and architecture'; // Initial text
+  }
+
+  // Function to pick an image from the gallery
+  Future<void> _pickImage() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+    }
+  }
+
+  // Function to upload the image to Firebase Storage
+  Future<String?> _uploadImage() async {
+    if (_image != null) {
+      try {
+        final firebase_storage.Reference storageRef =
+            firebase_storage.FirebaseStorage.instance.ref().child(
+                  'property_images/${DateTime.now().millisecondsSinceEpoch}.jpg',
+                );
+        await storageRef.putFile(_image!);
+        final String downloadURL = await storageRef.getDownloadURL();
+        return downloadURL;
+      } catch (e) {
+        print('Error uploading image: $e');
+      }
+    }
+    return null;
   }
 
   @override
@@ -36,9 +69,35 @@ class _SellPostsState extends State<SellPosts> {
                 Text(
                   'Tell us about the property you want to sell',
                   style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white), // Set text color to white
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ), // Set text color to white
+                ),
+                SizedBox(height: 20),
+                InkWell(
+                  onTap: _pickImage,
+                  child: Container(
+                    width: double.infinity,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      border: Border.all(
+                        color: Colors.white,
+                      ),
+                    ),
+                    child: _image != null
+                        ? Image.file(
+                            _image!,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                          )
+                        : Icon(
+                            Icons.add_photo_alternate,
+                            color: Colors.white,
+                            size: 50,
+                          ),
+                  ),
                 ),
                 SizedBox(height: 20),
                 TextFormField(
@@ -61,10 +120,15 @@ class _SellPostsState extends State<SellPosts> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () async {
+                      // Upload the image first and get its download URL
+                      final imageUrl = await _uploadImage();
+
+                      // Now, you can store the imageUrl and property description in Firestore
                       FirebaseService firebaseService = FirebaseService();
                       await firebaseService.submitSellPropertyData(
                         propertyDescription:
                             _propertyDescriptionController.text,
+                        imageUrl: imageUrl,
                       );
                     },
                     child: Text('Post'),

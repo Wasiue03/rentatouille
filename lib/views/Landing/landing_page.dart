@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rentatouille/views/Register/register.dart';
 import '../../services/Provider/auth_provider.dart';
 import '../Login/login.dart';
+import '../seller_screens/seller_register.dart';
 
 class LandingScreen extends StatelessWidget {
   const LandingScreen({Key? key});
@@ -74,7 +75,7 @@ class LandingScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => SellerRegisterPage()),
+                            builder: (context) => RegisterScreen()),
                       );
                     },
                     child: Text(

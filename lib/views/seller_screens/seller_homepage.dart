@@ -1,13 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:rentatouille/models/notifications/notify_model.dart';
 import 'package:rentatouille/views/Comments/comment_screen.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:rentatouille/views/news/news.dart';
-import 'package:rentatouille/views/seller_screens/seller_form.dart';
-
-import '../../services/Notifications/notification_service.dart';
-import 'notification_screen.dart';
+import 'package:rentatouille/views/seller_screens/seller_post.dart';
+import 'package:rentatouille/views/transaction/transaction_history.dart';
+import 'package:rentatouille/views/userProfile/Profile.dart';
 
 class SellerHomeScreen extends StatefulWidget {
   @override
@@ -15,31 +13,6 @@ class SellerHomeScreen extends StatefulWidget {
 }
 
 class _SellerHomeScreenState extends State<SellerHomeScreen> {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  final NotificationService _notificationService = NotificationService();
-
-  @override
-  void initState() {
-    super.initState();
-    _configureFirebaseMessaging();
-    _notificationService.initialize();
-  }
-
-  void _configureFirebaseMessaging() {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      final title = message.notification?.title;
-      final body = message.notification?.body;
-
-      if (title != null && body != null) {
-        _notificationService.showNotification(title, body);
-      }
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-      _notificationService.cancelNotification(0);
-    });
-  }
-
   void _goToCommentsScreen(String postId) {
     Navigator.push(
       context,
@@ -55,14 +28,11 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
           .collection('SellPosts')
           .doc(postId)
           .delete();
-      // You can also delete any related data or images associated with the post if needed.
 
-      // Show a success message or handle further actions.
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Post deleted successfully')),
       );
     } catch (e) {
-      // Handle any errors that may occur during the deletion process.
       print('Error deleting post: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error deleting post')),
@@ -76,7 +46,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         title: Text(
-          'Home',
+          'Dashboard',
           style: TextStyle(
             fontSize: 24,
           ),
@@ -84,14 +54,37 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
       ),
       body: Column(
         children: [
+          // Dashboard buttons
           Container(
-            color: Colors.black,
+            color: Colors.white,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-                  icon: Icon(Icons.add, color: Colors.white),
+                  icon: Icon(Icons.person, color: Colors.black),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UserProfileScreen(),
+                      ),
+                    );
+                    // Navigate to user profile screen
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.money, color: Colors.black),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => TransactionHistoryScreen()),
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.add, color: Colors.black),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -100,18 +93,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                   },
                 ),
                 IconButton(
-                  icon: Icon(Icons.notifications, color: Colors.white),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              NotificationScreen(notifications: notifications)),
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.newspaper, color: Colors.white),
+                  icon: Icon(Icons.newspaper, color: Colors.black),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -122,9 +104,10 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
               ],
             ),
           ),
+          // List of posts
           Expanded(
             child: Container(
-              color: Colors.black,
+              color: Colors.white,
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection('SellPosts')
@@ -144,14 +127,16 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                       final propertyDescription = post['propertyDescription'];
                       final postId = posts[index].id;
 
+                      final postRating = post['renterRating'] ?? 0.0;
+
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Card(
-                          color: Colors.black,
+                          color: Colors.white,
                           elevation: 4,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
-                            side: BorderSide(color: Colors.white),
+                            side: BorderSide(color: Colors.black),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -162,7 +147,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                   child: Text(
                                     propertyDescription,
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: Colors.black,
                                     ),
                                   ),
                                 ),
@@ -177,7 +162,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                     icon:
                                         Icon(Icons.comment, color: Colors.red),
                                     label: Text(
-                                      'Comments',
+                                      'Answers',
                                       style: TextStyle(
                                         color: Colors.red,
                                         fontSize: 16,
@@ -191,6 +176,17 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                     },
                                   ),
                                 ],
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  'Rating: $postRating', // Display the rating
+                                  style: TextStyle(
+                                    color:
+                                        const Color.fromARGB(255, 41, 181, 46),
+                                    fontSize: 15,
+                                  ),
+                                ),
                               ),
                             ],
                           ),

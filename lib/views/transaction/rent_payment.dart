@@ -31,24 +31,20 @@ class _RentPaymentFormState extends State<RentPaymentForm> {
       final tenantName = _tenantNameController.text;
       final rentAmount = double.parse(_rentAmountController.text);
 
-      // Create a Firestore reference to the "paymentRecords" collection
       final paymentCollection =
           FirebaseFirestore.instance.collection('paymentRecords');
 
-      // Create a new payment record document in Firestore
       await paymentCollection.add({
         'tenantName': tenantName,
         'rentAmount': rentAmount,
         'timestamp': FieldValue.serverTimestamp(),
       });
 
-      // Close the payment form screen and navigate back to the previous screen
       Navigator.pop(context);
     }
   }
 
   void _viewTransactionHistory(BuildContext context) {
-    // Navigate to the transaction history screen
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => TransactionHistoryScreen()),
@@ -59,27 +55,46 @@ class _RentPaymentFormState extends State<RentPaymentForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        title: Text(
+          'Rent Payment',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
       body: Center(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.white, // Border color
-                    width: 1.0, // Border width
-                  ),
-                  borderRadius: BorderRadius.circular(8.0), // Border radius
-                ),
-                child: TextFormField(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextFormField(
                   controller: _tenantNameController,
                   decoration: InputDecoration(
                     labelText: 'Tenant Name',
                     labelStyle: TextStyle(color: Colors.white),
-                    border: InputBorder
-                        .none, // Remove TextFormField's default border
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.red),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.red),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
                   ),
                   style: TextStyle(color: Colors.white),
                   validator: (value) {
@@ -89,23 +104,32 @@ class _RentPaymentFormState extends State<RentPaymentForm> {
                     return null;
                   },
                 ),
-              ),
-              SizedBox(height: 16), // Add spacing between text fields
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.white, // Border color
-                    width: 1.0, // Border width
-                  ),
-                  borderRadius: BorderRadius.circular(8.0), // Border radius
-                ),
-                child: TextFormField(
+                SizedBox(height: 16),
+                TextFormField(
                   controller: _rentAmountController,
                   decoration: InputDecoration(
                     labelText: 'Rent Amount',
                     labelStyle: TextStyle(color: Colors.white),
-                    border: InputBorder
-                        .none, // Remove TextFormField's default border
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.red),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.red),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
                   ),
                   style: TextStyle(color: Colors.white),
                   keyboardType: TextInputType.number,
@@ -119,27 +143,28 @@ class _RentPaymentFormState extends State<RentPaymentForm> {
                     return null;
                   },
                 ),
-              ),
-              SizedBox(height: 16), // Add spacing between text fields
-              ElevatedButton(
-                onPressed: () => _submitForm(context),
-                child: Text('Submit'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                ),
-              ),
-              SizedBox(height: 16), // Add spacing between button and text
-              TextButton(
-                onPressed: () => _viewTransactionHistory(context),
-                child: Text(
-                  'View Transaction History',
-                  style: TextStyle(
-                    color: Colors.white, // Text color
-                    decoration: TextDecoration.underline,
+                SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => _submitForm(context),
+                  child: Text('Submit'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
                   ),
                 ),
-              ),
-            ],
+                SizedBox(height: 16),
+                TextButton(
+                  onPressed: () => _viewTransactionHistory(context),
+                  child: Text(
+                    'View Transaction History',
+                    style: TextStyle(
+                      color: Colors.white,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -7,7 +7,10 @@ class TransactionHistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Transaction History'),
+        title: Text(
+          'Transaction History',
+        ),
+        backgroundColor: Colors.black,
       ),
       body: Container(
           color: Colors.black,
