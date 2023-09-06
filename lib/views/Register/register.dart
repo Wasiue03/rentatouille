@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rentatouille/models/User_Auth/user_auth.dart';
 import 'package:rentatouille/views/renter_screens/rent_form.dart';
 import 'package:rentatouille/views/renter_screens/rent_register.dart';
 import 'package:rentatouille/views/seller_screens/seller_register.dart';
@@ -75,7 +76,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => RentRegisterPage()),
+                          builder: (context) =>
+                              RentRegisterPage(userType: UserType.renter)),
                     );
                   } else if (_selectedOption == 'Sell') {
                     Navigator.push(

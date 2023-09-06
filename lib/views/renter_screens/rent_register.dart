@@ -1,12 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rentatouille/models/rent_props.dart';
+import 'package:rentatouille/models/Renter/rent_props.dart';
+import 'package:rentatouille/views/renter_screens/renter_homepage.dart';
 
-import '../../services/auth_provider.dart';
+import '../../models/User_Auth/user_auth.dart';
+import '../../services/Provider/auth_provider.dart';
 
 class RentRegisterPage extends StatefulWidget {
-  const RentRegisterPage({super.key});
+  final UserType userType; // Define the userType parameter
+
+  RentRegisterPage({required this.userType}); // Constructor
 
   @override
   _RegisterPageState createState() => _RegisterPageState();
@@ -43,22 +47,28 @@ class _RegisterPageState extends State<RentRegisterPage> {
         return;
       }
 
-      // Register user using AuthProvider
-      await AuthProvider.register(
+      UserCredential userCredential = await AuthProvider.register(
         context,
         _passwordController.text,
         _emailController.text,
+        widget.userType,
       );
 
-      // User is registered, now store property data
       await firebaseService.rentProperty(
         propertyName: _propertyNameController.text,
         location: _locationController.text,
         monthlyRent: double.parse(_monthlyRentController.text),
         propertyDescription: _propertyDescriptionController.text,
+        userId: userCredential.user!.uid,
       );
 
       // Navigate to a new screen after successful registration.
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RenterHomeScreen(),
+        ),
+      );
     } catch (e) {
       print('Registration error: $e');
       // Display a user-friendly error message to the user on the UI
@@ -70,6 +80,7 @@ class _RegisterPageState extends State<RentRegisterPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Register'),
+        backgroundColor: Colors.black,
       ),
       body: Container(
         color: Colors.black,
@@ -147,27 +158,6 @@ class _RegisterPageState extends State<RentRegisterPage> {
                   ),
                 ),
                 SizedBox(height: 10),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: TextFormField(
-                    controller: _propertyNameController,
-                    style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      labelText: 'Property Name',
-                      labelStyle: TextStyle(color: Colors.white),
-                      hintStyle: TextStyle(color: Colors.white),
-                      prefixIcon: Icon(Icons.home, color: Colors.white),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
-                ),
                 SizedBox(height: 10),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:rentatouille/views/register.dart';
-import 'login.dart';
+import 'package:rentatouille/views/Register/register.dart';
+import '../../services/Provider/auth_provider.dart';
+import '../Login/login.dart';
+import '../seller_screens/seller_register.dart';
 
 class LandingScreen extends StatelessWidget {
-  const LandingScreen({super.key});
+  const LandingScreen({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,12 +26,10 @@ class LandingScreen extends StatelessWidget {
                 width: 200,
                 height: 200,
                 decoration: BoxDecoration(
-                  borderRadius:
-                      BorderRadius.circular(100), // Apply border radius
+                  borderRadius: BorderRadius.circular(100),
                   image: DecorationImage(
-                    image: AssetImage(
-                        'assets/images/AI_Generated_Image.jpg'), // Replace with your JPG image path
-                    fit: BoxFit.cover, // Fit the image within the container
+                    image: AssetImage('assets/images/AI_Generated_Image.jpg'),
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
@@ -85,8 +85,44 @@ class LandingScreen extends StatelessWidget {
                   ),
                 ],
               ),
+              SizedBox(height: 20), // Add some space
+              _buildGoogleLoginButton(context), // Google login button
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGoogleLoginButton(BuildContext context) {
+    return ElevatedButton.icon(
+      onPressed: () async {
+        // Call your signInWithGoogle method and handle the result
+        try {
+          await AuthProvider().signInWithGoogle();
+          // Once Google Sign-In is successful, you can navigate to the appropriate screen.
+        } catch (e) {
+          // Handle any errors that might occur during Google Sign-In.
+          print("Error signing in with Google: $e");
+        }
+      },
+      icon: Image.asset(
+        'assets/images/google.png', // Replace with your Google logo image path
+        height: 24,
+        width: 24,
+      ),
+      label: Text(
+        "Sign in with Google",
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white, // Background color
+        foregroundColor: Colors.black, // Text color
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
         ),
       ),
     );

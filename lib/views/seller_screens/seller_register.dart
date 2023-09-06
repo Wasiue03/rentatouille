@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rentatouille/views/homepage.dart';
+import 'package:rentatouille/views/Login/login.dart';
+import 'package:rentatouille/views/seller_screens/seller_homepage.dart';
 
-import '../../models/sell_props.dart';
-import '../../services/auth_provider.dart';
+import '../../models/Seller/sell_props.dart';
+import '../../models/User_Auth/user_auth.dart';
+import '../../services/Provider/auth_provider.dart';
+import '../userProfile/Profile.dart';
 
 class SellerRegisterPage extends StatefulWidget {
   @override
@@ -40,15 +43,17 @@ class _SellerRegisterPageState extends State<SellerRegisterPage> {
         context,
         _passwordController.text,
         _emailController.text,
+        UserType.seller,
       );
       await firebaseService.sellProperty(
         propertyName: _propertyNameController.text,
         location: _locationController.text,
       );
+
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-            builder: (context) =>
-                SellerHomeScreen()), // Replace HomeScreen with your actual home screen widget
+          builder: (context) => LoginPage(),
+        ),
       );
 
       // User is registered and logged in, navigate to a new screen.
@@ -71,7 +76,7 @@ class _SellerRegisterPageState extends State<SellerRegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 40, 39, 39),
+        backgroundColor: Colors.black,
         title: Text('Seller Registration'),
       ),
       body: Container(
@@ -89,8 +94,10 @@ class _SellerRegisterPageState extends State<SellerRegisterPage> {
                     style: TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       labelText: 'Email',
-                      labelStyle: TextStyle(color: Colors.white),
-                      hintStyle: TextStyle(color: Colors.white),
+                      labelStyle: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
                       prefixIcon: Icon(Icons.email, color: Colors.white),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
@@ -112,7 +119,6 @@ class _SellerRegisterPageState extends State<SellerRegisterPage> {
                     decoration: InputDecoration(
                       labelText: 'Password',
                       labelStyle: TextStyle(color: Colors.white),
-                      hintStyle: TextStyle(color: Colors.white),
                       prefixIcon: Icon(Icons.lock, color: Colors.white),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
@@ -135,7 +141,6 @@ class _SellerRegisterPageState extends State<SellerRegisterPage> {
                     decoration: InputDecoration(
                       labelText: 'Confirm Password',
                       labelStyle: TextStyle(color: Colors.white),
-                      hintStyle: TextStyle(color: Colors.white),
                       prefixIcon: Icon(Icons.lock, color: Colors.white),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
@@ -158,7 +163,6 @@ class _SellerRegisterPageState extends State<SellerRegisterPage> {
                     decoration: InputDecoration(
                       labelText: 'Property Name',
                       labelStyle: TextStyle(color: Colors.white),
-                      hintStyle: TextStyle(color: Colors.white),
                       prefixIcon: Icon(Icons.home, color: Colors.white),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
@@ -180,7 +184,6 @@ class _SellerRegisterPageState extends State<SellerRegisterPage> {
                     decoration: InputDecoration(
                       labelText: 'Location',
                       labelStyle: TextStyle(color: Colors.white),
-                      hintStyle: TextStyle(color: Colors.white),
                       prefixIcon: Icon(Icons.location_on, color: Colors.white),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
@@ -188,7 +191,7 @@ class _SellerRegisterPageState extends State<SellerRegisterPage> {
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                   ),
@@ -200,8 +203,8 @@ class _SellerRegisterPageState extends State<SellerRegisterPage> {
                     onPressed: _register,
                     child: Text('Register'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.red, // Button background color
+                      foregroundColor: Colors.white, // Text color
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
